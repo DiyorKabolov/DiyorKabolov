@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import os
 import requests
 from pathlib import Path
@@ -12,7 +11,7 @@ CELL = 11
 GAP  = 2
 STEP = CELL + GAP
 
-SPEED = 0.05
+SPEED = 0.06
 PAUSE = 2.0
 
 HEAD_COLOR = "#7eb8f7"
@@ -62,10 +61,6 @@ def boustrophedon_path(num_weeks):
     return path
 
 
-def f(v):
-    return f"{v:.5f}"
-
-
 def generate_svg(weeks_data):
     num_weeks = len(weeks_data)
 
@@ -77,23 +72,21 @@ def generate_svg(weeks_data):
             )
 
     path = boustrophedon_path(num_weeks)
-    step_of = {pos: i for i, pos in enumerate(path)}
 
-    # только клетки с коммитами
-    food = [pos for pos, c in cells.items() if c != LEVEL_COLORS["NONE"]]
+    # 🔥 только клетки с коммитами
+    food = [pos for pos in path if pos in cells and cells[pos] != LEVEL_COLORS["NONE"]]
     food_set = set(food)
-
-    N = len(path)
-    total = N * SPEED + PAUSE
 
     W = num_weeks * STEP + 20
     H = 7 * STEP + 20
+
+    total = len(food) * SPEED + PAUSE
 
     lines = []
     w = lines.append
 
     w(f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}">')
-    w(f'<rect width="{W}" height="{H}" fill="{BG_COLOR}"/>')
+    w(f'<rect width="{W}" height="{H}" fill="{BG_COLOR}" rx="8"/>')
 
     # ── фон ──
     for (col, row), color in cells.items():
@@ -101,38 +94,56 @@ def generate_svg(weeks_data):
         y = row * STEP + 10
         w(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{color}"/>')
 
-    # ── тело змейки (накапливается) ──
-    for (col, row), i in step_of.items():
-        if (col, row) not in food_set:
-            continue
-
+    # ── тело змейки ──
+    for i, (col, row) in enumerate(food):
         x = col * STEP + 10
         y = row * STEP + 10
 
-        k = max(i * SPEED / total, 0.0001)
+        t = i / len(food)
 
         w(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{BODY_COLOR}" opacity="0">')
-        w(f'<animate attributeName="opacity" calcMode="discrete" '
-          f'values="0;1;1" '
-          f'keyTimes="0;{f(k)};1" '
-          f'dur="{total}s" repeatCount="indefinite"/>')
+        w(f'''
+        <animate attributeName="opacity"
+            values="0;1;1"
+            keyTimes="0;{t:.4f};1"
+            dur="{total}s"
+            calcMode="spline"
+            keySplines="0.4 0 0.2 1;0 0 1 1"
+            repeatCount="indefinite"/>
+        ''')
         w('</rect>')
 
-    # ── ГОЛОВА (движется) ──
-    values_x = []
-    values_y = []
+    # ── ПЛАВНАЯ ГОЛОВА ──
+    path_x = []
+    path_y = []
 
-    for (col, row) in path:
-        values_x.append(str(col * STEP + 10))
-        values_y.append(str(row * STEP + 10))
+    for col, row in food:
+        path_x.append(str(col * STEP + 10))
+        path_y.append(str(row * STEP + 10))
 
-    values_x.append(values_x[0])
-    values_y.append(values_y[0])
+    # зацикливание
+    path_x.append(path_x[0])
+    path_y.append(path_y[0])
 
     w(f'<rect width="{CELL}" height="{CELL}" rx="2" fill="{HEAD_COLOR}">')
 
-    w(f'<animate attributeName="x" values="{";".join(values_x)}" dur="{total}s" repeatCount="indefinite"/>')
-    w(f'<animate attributeName="y" values="{";".join(values_y)}" dur="{total}s" repeatCount="indefinite"/>')
+    w(f'''
+    <animate attributeName="x"
+        values="{";".join(path_x)}"
+        dur="{total}s"
+        calcMode="spline"
+        keySplines="0.4 0 0.2 1"
+        repeatCount="indefinite"/>
+    ''')
+
+    w(f'''
+    <animate attributeName="y"
+        values="{";".join(path_y)}"
+        dur="{total}s"
+        calcMode="spline"
+        keySplines="0.4 0 0.2 1"
+        repeatCount="indefinite"/>
+    ''')
 
     w('</rect>')
 
