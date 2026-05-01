@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=1,2,3,4,5,6,7,8,9,10&height=250&section=header&text=Diyor Kabolov&fontSize=90&animation=fadeIn" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=1,2,3,4,5,6,7,8,9,10&height=250&section=header&text=DiyorKabolov&fontSize=90&animation=fadeIn" />
 </p>
 
 <p align="center">
@@ -20,18 +20,18 @@
 ### 📊 Статистика профиля
 <p align="center">
   <img src="https://github-readme-stats.vercel.app/api?username=DiyorKabolov&show_icons=true&theme=tokyonight&hide_border=true&align=center" alt="GitHub Stats" height="180" />
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=ТВОЙ_ЛОГИН&theme=tokyonight&hide_border=true" alt="GitHub Streak" height="180" />
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=DiyorKabolov&theme=tokyonight&hide_border=true" alt="GitHub Streak" height="180" />
 </p>
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=ТВОЙ_ЛОГИН&layout=compact&theme=tokyonight&hide_border=true" alt="Top Languages" height="180" />
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=DiyorKabolov&layout=compact&theme=tokyonight&hide_border=true" alt="Top Languages" height="180" />
 </p>
 
 ---
 
 ### 🐍 Активность (Snake Game)
 <p align="center">
-  <img src="https://github.com/ТВОЙ_ЛОГИН/ТВОЙ_ЛОГИН/blob/output/github-contribution-grid-snake.svg" alt="Snake animation" />
+  <img src="https://github.com/DiyorKabolov/DiyorKabolov/blob/output/github-contribution-grid-snake.svg" alt="Snake animation" />
 </p>
 
 ---
