@@ -1,16 +1,39 @@
-## Hi there 👋
+# Привет! Я Дильшод 👋
 
-<!--
-**DiyorKabolov/DiyorKabolov** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+Студент IT-направления, увлекаюсь разработкой надежных систем и математическим моделированием. Сочетаю глубокий интерес к физике и математике с практическим программированием на Python и работой с базами данных.
 
-Here are some ideas to get you started:
+---
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+### 🛠 Стек технологий
+
+*   **Языки:** Python, SQL, C++
+*   **Backend & DB:** REST API, MySQL, миграция данных
+*   **Data Science & Math:** Matplotlib, численные методы, симуляция физических процессов
+*   **Инструменты:** Git, Linux, оптимизация производительности систем
+
+---
+
+### 🚀 Мои проекты
+
+*   **Electronic Ticket System:** Система бронирования билетов. Провел полную миграцию базы данных на MySQL и оптимизировал логику обработки запросов.
+*   **Heat Conduction Simulation:** Численное решение уравнения теплопроводности на L-образной области с 3D-визуализацией распределения тепла.
+*   **REST API Services:** Разработка и тестирование серверной части приложений с использованием современных практик API-дизайна.
+
+---
+
+### 📊 Статистика GitHub
+
+![GitHub Stats](https://github-readme-stats.vercel.app/api?username=ТВОЙ_ЛОГИН&show_icons=true&theme=radical&hide_border=true)
+![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=ТВОЙ_ЛОГИН&layout=compact&theme=radical&hide_border=true)
+
+---
+
+### ⚡ Интересы
+*   **Gaming:** Люблю сложные механики и глубокий геймплей (поклонник Sekiro: Shadows Die Twice).
+*   **Music:** Работаю под классику альтернативного рока и метала (Metallica, Linkin Park, SOAD).
+*   **Hardware:** Интересуюсь оптимизацией «железа» и высокопроизводительными системами.
+
+---
+
+### 📫 Как со мной связаться
+[Здесь можно вставить ссылку на Telegram или LinkedIn]
