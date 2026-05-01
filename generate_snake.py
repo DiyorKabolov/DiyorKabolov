@@ -12,7 +12,7 @@ CELL = 11
 GAP  = 2
 STEP = CELL + GAP
 
-SPEED = 0.045
+SPEED = 0.05
 PAUSE = 2.0
 
 HEAD_COLOR = "#7eb8f7"
@@ -20,15 +20,13 @@ BODY_COLOR = "#3c7dd9"
 BG_COLOR   = "#0d1117"
 
 LEVEL_COLORS = {
-    "NONE":             "#161b22",
-    "FIRST_QUARTILE":   "#0e4429",
-    "SECOND_QUARTILE":  "#006d32",
-    "THIRD_QUARTILE":   "#26a641",
-    "FOURTH_QUARTILE":  "#39d353",
+    "NONE": "#161b22",
+    "FIRST_QUARTILE": "#0e4429",
+    "SECOND_QUARTILE": "#006d32",
+    "THIRD_QUARTILE": "#26a641",
+    "FOURTH_QUARTILE": "#39d353",
 }
 
-
-# ── GitHub API ─────────────────────────────────────
 
 def fetch_contributions():
     query = """
@@ -50,13 +48,10 @@ def fetch_contributions():
         "https://api.github.com/graphql",
         json={"query": query, "variables": {"login": GITHUB_USER}},
         headers={"Authorization": f"bearer {GITHUB_TOKEN}"},
-        timeout=15,
     )
     r.raise_for_status()
     return r.json()["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]
 
-
-# ── путь змейки ────────────────────────────────────
 
 def boustrophedon_path(num_weeks):
     path = []
@@ -71,12 +66,9 @@ def f(v):
     return f"{v:.5f}"
 
 
-# ── SVG ────────────────────────────────────────────
-
 def generate_svg(weeks_data):
     num_weeks = len(weeks_data)
 
-    # карта клеток
     cells = {}
     for w, week in enumerate(weeks_data):
         for d, day in enumerate(week["contributionDays"]):
@@ -87,9 +79,12 @@ def generate_svg(weeks_data):
     path = boustrophedon_path(num_weeks)
     step_of = {pos: i for i, pos in enumerate(path)}
 
+    # только клетки с коммитами
+    food = [pos for pos, c in cells.items() if c != LEVEL_COLORS["NONE"]]
+    food_set = set(food)
+
     N = len(path)
     total = N * SPEED + PAUSE
-    k_end = (total - 0.08) / total
 
     W = num_weeks * STEP + 20
     H = 7 * STEP + 20
@@ -97,59 +92,58 @@ def generate_svg(weeks_data):
     lines = []
     w = lines.append
 
-    w(f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">')
-    w(f'<rect width="{W}" height="{H}" fill="{BG_COLOR}" rx="8"/>')
+    w(f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}">')
+    w(f'<rect width="{W}" height="{H}" fill="{BG_COLOR}"/>')
 
-    for (col, row), base_color in cells.items():
+    # ── фон ──
+    for (col, row), color in cells.items():
+        x = col * STEP + 10
+        y = row * STEP + 10
+        w(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{color}"/>')
+
+    # ── тело змейки (накапливается) ──
+    for (col, row), i in step_of.items():
+        if (col, row) not in food_set:
+            continue
+
         x = col * STEP + 10
         y = row * STEP + 10
 
-        i = step_of.get((col, row))
+        k = max(i * SPEED / total, 0.0001)
 
-        # ── ПУСТАЯ КЛЕТКА ──
-        if base_color == LEVEL_COLORS["NONE"] or i is None:
-            w(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{base_color}"/>')
-            continue
-
-        k_eat  = max(i * SPEED / total, 0.0001)
-        k_next = min((i + 1) * SPEED / total, k_end - 0.0001)
-
-        # ── клетка исчезает только если есть коммит ──
-        w(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{base_color}">')
+        w(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{BODY_COLOR}" opacity="0">')
         w(f'<animate attributeName="opacity" calcMode="discrete" '
-          f'values="1;0;0;1" '
-          f'keyTimes="0;{f(k_eat)};{f(k_end)};1" '
-          f'dur="{total:.3f}s" repeatCount="indefinite"/>')
+          f'values="0;1;1" '
+          f'keyTimes="0;{f(k)};1" '
+          f'dur="{total}s" repeatCount="indefinite"/>')
         w('</rect>')
 
-        # ── змейка ──
-        w(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{HEAD_COLOR}" opacity="0">')
+    # ── ГОЛОВА (движется) ──
+    values_x = []
+    values_y = []
 
-        w(f'<animate attributeName="opacity" calcMode="discrete" '
-          f'values="0;1;1;0" '
-          f'keyTimes="0;{f(k_eat)};{f(k_end)};1" '
-          f'dur="{total:.3f}s" repeatCount="indefinite"/>')
+    for (col, row) in path:
+        values_x.append(str(col * STEP + 10))
+        values_y.append(str(row * STEP + 10))
 
-        w(f'<animate attributeName="fill" calcMode="discrete" '
-          f'values="{HEAD_COLOR};{HEAD_COLOR};{BODY_COLOR};{BODY_COLOR}" '
-          f'keyTimes="0;{f(k_eat)};{f(k_next)};1" '
-          f'dur="{total:.3f}s" repeatCount="indefinite"/>')
+    values_x.append(values_x[0])
+    values_y.append(values_y[0])
 
-        w('</rect>')
+    w(f'<rect width="{CELL}" height="{CELL}" rx="2" fill="{HEAD_COLOR}">')
+
+    w(f'<animate attributeName="x" values="{";".join(values_x)}" dur="{total}s" repeatCount="indefinite"/>')
+    w(f'<animate attributeName="y" values="{";".join(values_y)}" dur="{total}s" repeatCount="indefinite"/>')
+
+    w('</rect>')
 
     w('</svg>')
     return "\n".join(lines)
 
 
-# ── MAIN ───────────────────────────────────────────
-
 def main():
     OUTPUT_DIR.mkdir(exist_ok=True)
 
-    print(f"Fetching contributions for @{GITHUB_USER} ...")
     weeks = fetch_contributions()
-    print(f"Got {len(weeks)} weeks")
-
     svg = generate_svg(weeks)
 
     for name in (
@@ -157,7 +151,6 @@ def main():
         "github-contribution-grid-snake-dark.svg",
     ):
         (OUTPUT_DIR / name).write_text(svg, encoding="utf-8")
-        print(f"OK dist/{name}")
 
 
 if __name__ == "__main__":
