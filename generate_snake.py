@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import os
 import requests
 from pathlib import Path
@@ -11,7 +12,7 @@ CELL = 11
 GAP  = 2
 STEP = CELL + GAP
 
-SPEED = 0.05
+SPEED = 0.045
 PAUSE = 2.0
 
 HEAD_COLOR = "#7eb8f7"
@@ -26,6 +27,8 @@ LEVEL_COLORS = {
     "FOURTH_QUARTILE":  "#39d353",
 }
 
+
+# ── GitHub API ─────────────────────────────────────
 
 def fetch_contributions():
     query = """
@@ -47,10 +50,13 @@ def fetch_contributions():
         "https://api.github.com/graphql",
         json={"query": query, "variables": {"login": GITHUB_USER}},
         headers={"Authorization": f"bearer {GITHUB_TOKEN}"},
+        timeout=15,
     )
     r.raise_for_status()
     return r.json()["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]
 
+
+# ── путь змейки ────────────────────────────────────
 
 def boustrophedon_path(num_weeks):
     path = []
@@ -65,9 +71,12 @@ def f(v):
     return f"{v:.5f}"
 
 
+# ── SVG ────────────────────────────────────────────
+
 def generate_svg(weeks_data):
     num_weeks = len(weeks_data)
 
+    # карта клеток
     cells = {}
     for w, week in enumerate(weeks_data):
         for d, day in enumerate(week["contributionDays"]):
@@ -75,67 +84,72 @@ def generate_svg(weeks_data):
                 day["contributionLevel"], LEVEL_COLORS["NONE"]
             )
 
-    # 🔥 только клетки с коммитами
-    path = [
-        pos for pos, color in cells.items()
-        if color != LEVEL_COLORS["NONE"]
-    ]
-
-    # сортируем по "змейке"
-    order = boustrophedon_path(num_weeks)
-    path.sort(key=lambda x: order.index(x) if x in order else 9999)
+    path = boustrophedon_path(num_weeks)
+    step_of = {pos: i for i, pos in enumerate(path)}
 
     N = len(path)
     total = N * SPEED + PAUSE
-    k_end = (total - 0.05) / total
-
-    step_of = {pos: i for i, pos in enumerate(path)}
+    k_end = (total - 0.08) / total
 
     W = num_weeks * STEP + 20
     H = 7 * STEP + 20
 
-    out = []
-    w = out.append
+    lines = []
+    w = lines.append
 
-    w(f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}">')
-    w(f'<rect width="{W}" height="{H}" fill="{BG_COLOR}"/>')
+    w(f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">')
+    w(f'<rect width="{W}" height="{H}" fill="{BG_COLOR}" rx="8"/>')
 
-    # ── фон (все клетки) ──
-    for (col, row), color in cells.items():
-        x = col * STEP + 10
-        y = row * STEP + 10
-        w(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{color}"/>')
-
-    # ── змейка (ТОЛЬКО коммиты) ──
-    for (col, row), i in step_of.items():
+    for (col, row), base_color in cells.items():
         x = col * STEP + 10
         y = row * STEP + 10
 
-        k_eat = max(i * SPEED / total, 0.0001)
-        k_next = min((i + 1) * SPEED / total, k_end)
+        i = step_of.get((col, row))
 
+        # ── ПУСТАЯ КЛЕТКА ──
+        if base_color == LEVEL_COLORS["NONE"] or i is None:
+            w(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{base_color}"/>')
+            continue
+
+        k_eat  = max(i * SPEED / total, 0.0001)
+        k_next = min((i + 1) * SPEED / total, k_end - 0.0001)
+
+        # ── клетка исчезает только если есть коммит ──
+        w(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{base_color}">')
+        w(f'<animate attributeName="opacity" calcMode="discrete" '
+          f'values="1;0;0;1" '
+          f'keyTimes="0;{f(k_eat)};{f(k_end)};1" '
+          f'dur="{total:.3f}s" repeatCount="indefinite"/>')
+        w('</rect>')
+
+        # ── змейка ──
         w(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{HEAD_COLOR}" opacity="0">')
 
         w(f'<animate attributeName="opacity" calcMode="discrete" '
           f'values="0;1;1;0" '
           f'keyTimes="0;{f(k_eat)};{f(k_end)};1" '
-          f'dur="{total}s" repeatCount="indefinite"/>')
+          f'dur="{total:.3f}s" repeatCount="indefinite"/>')
 
         w(f'<animate attributeName="fill" calcMode="discrete" '
           f'values="{HEAD_COLOR};{HEAD_COLOR};{BODY_COLOR};{BODY_COLOR}" '
           f'keyTimes="0;{f(k_eat)};{f(k_next)};1" '
-          f'dur="{total}s" repeatCount="indefinite"/>')
+          f'dur="{total:.3f}s" repeatCount="indefinite"/>')
 
         w('</rect>')
 
     w('</svg>')
-    return "\n".join(out)
+    return "\n".join(lines)
 
+
+# ── MAIN ───────────────────────────────────────────
 
 def main():
     OUTPUT_DIR.mkdir(exist_ok=True)
 
+    print(f"Fetching contributions for @{GITHUB_USER} ...")
     weeks = fetch_contributions()
+    print(f"Got {len(weeks)} weeks")
+
     svg = generate_svg(weeks)
 
     for name in (
@@ -143,6 +157,7 @@ def main():
         "github-contribution-grid-snake-dark.svg",
     ):
         (OUTPUT_DIR / name).write_text(svg, encoding="utf-8")
+        print(f"OK dist/{name}")
 
 
 if __name__ == "__main__":
