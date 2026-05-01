@@ -47,5 +47,5 @@
 </p>
 
 <p align="center">
-  <img src="https://komarev.com/ghpvc/?username=ТВОЙ_ЛОГИН&color=blue&style=flat-square&label=VISITS" alt="Visits" />
+  <img src="https://komarev.com/ghpvc/?username=DiyorKabolov&color=blue&style=flat-square&label=VISITS" alt="Visits" />
 </p>
