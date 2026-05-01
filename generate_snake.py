@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Generates a growing snake SVG animation from GitHub contribution data.
-The snake eats ONLY cells with contributions (not empty ones).
+Snake GitHub animation (fixed version)
 """
 
 import os
@@ -12,16 +11,13 @@ GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]
 GITHUB_USER  = os.environ.get("GITHUB_USER", "DiyorKabolov")
 OUTPUT_DIR   = Path("dist")
 
-# Layout
-CELL  = 11
-GAP   = 2
-STEP  = CELL + GAP
+CELL = 11
+GAP  = 2
+STEP = CELL + GAP
 
-# Timing
 SPEED = 0.045
 PAUSE = 2.0
 
-# Colors
 HEAD_COLOR = "#7eb8f7"
 BODY_COLOR = "#3c7dd9"
 BG_COLOR   = "#0d1117"
@@ -35,9 +31,9 @@ LEVEL_COLORS = {
 }
 
 
-# ── GitHub API ─────────────────────────────────────────────────────────────
+# ── API ─────────────────────────────────────────────
 
-def fetch_contributions() -> list:
+def fetch_contributions():
     query = """
     query($login: String!) {
       user(login: $login) {
@@ -53,20 +49,20 @@ def fetch_contributions() -> list:
       }
     }
     """
-    response = requests.post(
+    r = requests.post(
         "https://api.github.com/graphql",
         json={"query": query, "variables": {"login": GITHUB_USER}},
         headers={"Authorization": f"bearer {GITHUB_TOKEN}"},
         timeout=15,
     )
-    response.raise_for_status()
-    data = response.json()
+    r.raise_for_status()
+    data = r.json()
     return data["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]
 
 
-# ── Path ───────────────────────────────────────────────────────────────────
+# ── PATH ───────────────────────────────────────────
 
-def boustrophedon_path(num_weeks: int, days: int = 7) -> list:
+def boustrophedon_path(num_weeks, days=7):
     path = []
     for w in range(num_weeks):
         col = range(days) if w % 2 == 0 else range(days - 1, -1, -1)
@@ -75,15 +71,13 @@ def boustrophedon_path(num_weeks: int, days: int = 7) -> list:
     return path
 
 
-# ── Utils ──────────────────────────────────────────────────────────────────
-
-def f(v: float) -> str:
+def f(v):
     return f"{v:.5f}"
 
 
-# ── SVG ────────────────────────────────────────────────────────────────────
+# ── SVG ────────────────────────────────────────────
 
-def generate_svg(weeks_data: list) -> str:
+def generate_svg(weeks_data):
     num_weeks = len(weeks_data)
 
     # Карта клеток
@@ -94,21 +88,21 @@ def generate_svg(weeks_data: list) -> str:
                 day["contributionLevel"], LEVEL_COLORS["NONE"]
             )
 
-    # 🔥 ПОЛНЫЙ путь
     full_path = boustrophedon_path(num_weeks)
 
-    # 🔥 ФИЛЬТР — только клетки с коммитами
-    path = [pos for pos in full_path if cells[pos] != LEVEL_COLORS["NONE"]]
+    # ✅ ФИКС: защита от отсутствующих клеток
+    path = [
+        pos for pos in full_path
+        if pos in cells and cells[pos] != LEVEL_COLORS["NONE"]
+    ]
 
     N = len(path)
     total = N * SPEED + PAUSE
-
     k_end = (total - 0.08) / total
 
     W = num_weeks * STEP + 20
     H = 7 * STEP + 20
 
-    # только для "съедаемых" клеток
     step_of = {(w, d): i for i, (w, d) in enumerate(path)}
 
     lines = []
@@ -121,7 +115,7 @@ def generate_svg(weeks_data: list) -> str:
         x = col * STEP + 10
         y = row * STEP + 10
 
-        # 🟩 ПУСТЫЕ клетки — просто рисуем
+        # ⬛ пустая клетка
         if (col, row) not in step_of:
             w_(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{base_color}"/>')
             continue
@@ -131,7 +125,7 @@ def generate_svg(weeks_data: list) -> str:
         k_eat  = max(i * SPEED / total, 0.0001)
         k_next = min((i + 1) * SPEED / total, k_end - 0.0001)
 
-        # ── клетка исчезает когда съели ──
+        # клетка исчезает
         w_(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{base_color}">')
         w_(f'<animate attributeName="opacity" calcMode="discrete" '
            f'values="1;0;0;1" '
@@ -139,7 +133,7 @@ def generate_svg(weeks_data: list) -> str:
            f'dur="{total:.3f}s" repeatCount="indefinite"/>')
         w_('</rect>')
 
-        # ── змейка ──
+        # змейка
         w_(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{HEAD_COLOR}" opacity="0">')
 
         w_(f'<animate attributeName="opacity" calcMode="discrete" '
@@ -155,10 +149,10 @@ def generate_svg(weeks_data: list) -> str:
         w_('</rect>')
 
     w_('</svg>')
-    return '\n'.join(lines)
+    return "\n".join(lines)
 
 
-# ── MAIN ───────────────────────────────────────────────────────────────────
+# ── MAIN ───────────────────────────────────────────
 
 def main():
     OUTPUT_DIR.mkdir(exist_ok=True)
