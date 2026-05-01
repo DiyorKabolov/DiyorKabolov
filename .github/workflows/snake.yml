@@ -1,37 +1,39 @@
 name: generate animation
 
 on:
-  # запуск каждые 24 часа
   schedule:
-    - cron: "0 */24 * * *" 
-  
-  # возможность запустить вручную
-  workflow_dispatch:
-  
-  # запуск при каждом пуше в main ветку
+    - cron: "0 0 * * *"   # каждый день в полночь
+  workflow_dispatch:        # ручной запуск
   push:
     branches:
-    - main
+      - main
 
 jobs:
   generate:
-    permissions: 
+    permissions:
       contents: write
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    
+    timeout-minutes: 10
+
     steps:
-      # Генерирует игру «Змейка» на основе твоей активности в IT-проектах
-      - name: generate-snake-game-from-github-contribution-grid
-        uses: Platane/snk@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          github_user_name: DiyorKabolov
-          outputs: |
-            dist/github-contribution-grid-snake.svg?palette=github-dark&color_snake=#3c7dd9&growth=true
-            dist/github-contribution-grid-snake-dark.svg?palette=github-dark&color_snake=#3c7dd9&growth=true
-          
-      # Пушит результат в ветку output для отображения в профиле
-      - name: push github-contribution-grid-snake.svg to the output branch
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Generate growing snake SVG
+        run: python generate_snake.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USER: DiyorKabolov
+
+      - name: Push SVGs to output branch
         uses: crazy-max/ghaction-github-pages@v3.1.0
         with:
           target_branch: output
