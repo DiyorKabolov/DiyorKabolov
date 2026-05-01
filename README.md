@@ -1,38 +1,51 @@
-# Привет! Я Каболов Диёр 👋
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=1,2,3,4,5,6,7,8,9,10&height=250&section=header&text=Dilshod&fontSize=90&animation=fadeIn" />
+</p>
 
-Студент IT-направления, увлекаюсь разработкой надежных систем и математическим моделированием. Сочетаю глубокий интерес к физике и математике с практическим программированием на Python и работой с базами данных.
-
----
-
-### 🛠 Стек технологий
-
-*   **Языки:** Python, SQL, C++
-*   **Backend & DB:** REST API, MySQL, миграция данных
-*   **Data Science & Math:** Matplotlib, численные методы, симуляция физических процессов
-*   **Инструменты:** Git, Linux, оптимизация производительности систем
+<p align="center">
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&pause=1000&color=F7F7F7&center=true&vCenter=true&width=435&lines=Student+at+University;Backend+Developer;Math+%26+Physics+Enthusiast;Gamer+%26+Rock+Fan" />
+</p>
 
 ---
 
-### 🚀 Мои проекты
-
-*   **Electronic Ticket System:** Система бронирования билетов.
-*   **Heat Conduction Simulation:** Численное решение уравнения теплопроводности на L-образной области с 3D-визуализацией распределения тепла.
-*   **REST API Services:** Разработка и тестирование серверной части приложений с использованием современных практик API-дизайна.
-
----
-
-### 📊 Статистика GitHub
-
-![GitHub Stats](https://github-readme-stats.vercel.app/api?username=ТВОЙ_ЛОГИН&show_icons=true&theme=radical&hide_border=true)
-![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=ТВОЙ_ЛОГИН&layout=compact&theme=radical&hide_border=true)
+### 🛠 Мой стек технологий
+<p align="center">
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=py,cpp,mysql,git,linux,vscode,matlab&theme=dark" />
+  </a>
+</p>
 
 ---
 
-### ⚡ Интересы
-*   **Gaming:** Люблю сложные механики и глубокий геймплей (поклонник Sekiro: Shadows Die Twice).
-*   **Music:** Работаю под классику альтернативного рока и метала (Metallica, Linkin Park, SOAD).
-*   **Hardware:** Интересуюсь оптимизацией «железа» и высокопроизводительными системами.
+### 📊 Статистика профиля
+<p align="center">
+  <img src="https://github-readme-stats.vercel.app/api?username=ТВОЙ_ЛОГИН&show_icons=true&theme=tokyonight&hide_border=true&align=center" alt="GitHub Stats" height="180" />
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=ТВОЙ_ЛОГИН&theme=tokyonight&hide_border=true" alt="GitHub Streak" height="180" />
+</p>
+
+<p align="center">
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=ТВОЙ_ЛОГИН&layout=compact&theme=tokyonight&hide_border=true" alt="Top Languages" height="180" />
+</p>
 
 ---
 
-### 📫 Как со мной связаться
+### 🐍 Активность (Snake Game)
+<p align="center">
+  <img src="https://github.com/ТВОЙ_ЛОГИН/ТВОЙ_ЛОГИН/blob/output/github-contribution-grid-snake.svg" alt="Snake animation" />
+</p>
+
+---
+
+### 📫 Связь
+<p align="center">
+  <a href="https://t.me/ТВОЙ_ТЕЛЕГРАМ" target="blank">
+    <img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" />
+  </a>
+  <a href="mailto:ТВОЯ_ПОЧТА@gmail.com" target="blank">
+    <img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" />
+  </a>
+</p>
+
+<p align="center">
+  <img src="https://komarev.com/ghpvc/?username=ТВОЙ_ЛОГИН&color=blue&style=flat-square&label=VISITS" alt="Visits" />
+</p>
