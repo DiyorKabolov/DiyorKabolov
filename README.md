@@ -1,14 +1,15 @@
-<div align="center">
-
 # 💫 About Me:
 I am a 20-year-old Information Technology student with a strong focus on Backend Development and Computational Science. Currently, I am working on the technical migration and optimization of an electronic ticket system. My expertise lies at the intersection of software engineering, advanced calculus, and discrete mathematics.
 
 I have practical experience in developing numerical simulations, including heat conduction models on complex domains using Matplotlib. I am passionate about high-performance computing hardware and optimizing development environments for maximum efficiency.
 
+<div align="center">
+
 ---
 
 ## 🌐 Socials:
 [![email](https://img.shields.io/badge/Email-D14836?logo=gmail&logoColor=white)](mailto:dierkabolov34@gmail.com) 
+[![telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](Diyor_kab)
 
 ---
 
