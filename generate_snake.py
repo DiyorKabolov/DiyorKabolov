@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
 Generates a growing snake SVG animation from GitHub contribution data.
-The snake starts at 1 cell and permanently grows with each contribution cell eaten.
-At the end of the grid it resets and loops.
+The snake eats ONLY cells with contributions (not empty ones).
 """
 
 import os
@@ -14,13 +13,13 @@ GITHUB_USER  = os.environ.get("GITHUB_USER", "DiyorKabolov")
 OUTPUT_DIR   = Path("dist")
 
 # Layout
-CELL  = 11      # px
-GAP   = 2       # px
+CELL  = 11
+GAP   = 2
 STEP  = CELL + GAP
 
 # Timing
-SPEED = 0.045   # seconds per cell  (~40s total for full grid)
-PAUSE = 2.0     # seconds of pause before loop restart
+SPEED = 0.045
+PAUSE = 2.0
 
 # Colors
 HEAD_COLOR = "#7eb8f7"
@@ -36,7 +35,7 @@ LEVEL_COLORS = {
 }
 
 
-# ── GitHub GraphQL ──────────────────────────────────────────────────────────
+# ── GitHub API ─────────────────────────────────────────────────────────────
 
 def fetch_contributions() -> list:
     query = """
@@ -65,10 +64,9 @@ def fetch_contributions() -> list:
     return data["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]
 
 
-# ── Snake path ──────────────────────────────────────────────────────────────
+# ── Path ───────────────────────────────────────────────────────────────────
 
 def boustrophedon_path(num_weeks: int, days: int = 7) -> list:
-    """Serpentine path: column 0 goes down, column 1 goes up, etc."""
     path = []
     for w in range(num_weeks):
         col = range(days) if w % 2 == 0 else range(days - 1, -1, -1)
@@ -77,102 +75,106 @@ def boustrophedon_path(num_weeks: int, days: int = 7) -> list:
     return path
 
 
-# ── SVG generation ──────────────────────────────────────────────────────────
+# ── Utils ──────────────────────────────────────────────────────────────────
 
 def f(v: float) -> str:
-    """Format a keyTime value to 5 decimal places."""
     return f"{v:.5f}"
 
+
+# ── SVG ────────────────────────────────────────────────────────────────────
 
 def generate_svg(weeks_data: list) -> str:
     num_weeks = len(weeks_data)
 
-    # Build cell colour map
+    # Карта клеток
     cells = {}
     for w, week in enumerate(weeks_data):
         for d, day in enumerate(week["contributionDays"]):
-            cells[(w, d)] = LEVEL_COLORS.get(day["contributionLevel"], LEVEL_COLORS["NONE"])
+            cells[(w, d)] = LEVEL_COLORS.get(
+                day["contributionLevel"], LEVEL_COLORS["NONE"]
+            )
 
-    path  = boustrophedon_path(num_weeks)
-    N     = len(path)
+    # 🔥 ПОЛНЫЙ путь
+    full_path = boustrophedon_path(num_weeks)
+
+    # 🔥 ФИЛЬТР — только клетки с коммитами
+    path = [pos for pos in full_path if cells[pos] != LEVEL_COLORS["NONE"]]
+
+    N = len(path)
     total = N * SPEED + PAUSE
 
-    # Normalised time just before the loop restarts (cells reappear here)
     k_end = (total - 0.08) / total
 
     W = num_weeks * STEP + 20
     H = 7 * STEP + 20
 
+    # только для "съедаемых" клеток
     step_of = {(w, d): i for i, (w, d) in enumerate(path)}
 
     lines = []
     w_ = lines.append
 
-    w_(f'<svg xmlns="http://www.w3.org/2000/svg" '
-       f'width="{W}" height="{H}" viewBox="0 0 {W} {H}">')
-    w_(f'  <rect width="{W}" height="{H}" fill="{BG_COLOR}" rx="8"/>')
+    w_(f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">')
+    w_(f'<rect width="{W}" height="{H}" fill="{BG_COLOR}" rx="8"/>')
 
     for (col, row), base_color in cells.items():
         x = col * STEP + 10
         y = row * STEP + 10
+
+        # 🟩 ПУСТЫЕ клетки — просто рисуем
+        if (col, row) not in step_of:
+            w_(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{base_color}"/>')
+            continue
+
         i = step_of[(col, row)]
 
-        # Avoid a keyTime of exactly 0 for the first cell (invalid in SMIL)
         k_eat  = max(i * SPEED / total, 0.0001)
         k_next = min((i + 1) * SPEED / total, k_end - 0.0001)
 
-        # ── Contribution cell ──────────────────────────────────────────────
-        # Visible → invisible when eaten → visible again on reset
-        w_(f'  <rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" '
-           f'rx="2" fill="{base_color}">')
-        w_(f'    <animate attributeName="opacity" calcMode="discrete"'
-           f' values="1;0;0;1"'
-           f' keyTimes="0;{f(k_eat)};{f(k_end)};1"'
-           f' dur="{total:.3f}s" repeatCount="indefinite"/>')
-        w_('  </rect>')
+        # ── клетка исчезает когда съели ──
+        w_(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{base_color}">')
+        w_(f'<animate attributeName="opacity" calcMode="discrete" '
+           f'values="1;0;0;1" '
+           f'keyTimes="0;{f(k_eat)};{f(k_end)};1" '
+           f'dur="{total:.3f}s" repeatCount="indefinite"/>')
+        w_('</rect>')
 
-        # ── Snake segment ──────────────────────────────────────────────────
-        # Appears as HEAD when eaten, transitions to BODY when next cell eaten,
-        # stays until loop reset (snake grows — tail never removed)
-        w_(f'  <rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" '
-           f'rx="2" fill="{HEAD_COLOR}" opacity="0">')
+        # ── змейка ──
+        w_(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{HEAD_COLOR}" opacity="0">')
 
-        # Opacity: hidden → visible → hidden (on reset)
-        w_(f'    <animate attributeName="opacity" calcMode="discrete"'
-           f' values="0;1;1;0"'
-           f' keyTimes="0;{f(k_eat)};{f(k_end)};1"'
-           f' dur="{total:.3f}s" repeatCount="indefinite"/>')
+        w_(f'<animate attributeName="opacity" calcMode="discrete" '
+           f'values="0;1;1;0" '
+           f'keyTimes="0;{f(k_eat)};{f(k_end)};1" '
+           f'dur="{total:.3f}s" repeatCount="indefinite"/>')
 
-        # Colour: HEAD → BODY when the next cell is eaten
-        w_(f'    <animate attributeName="fill" calcMode="discrete"'
-           f' values="{HEAD_COLOR};{HEAD_COLOR};{BODY_COLOR};{BODY_COLOR}"'
-           f' keyTimes="0;{f(k_eat)};{f(k_next)};1"'
-           f' dur="{total:.3f}s" repeatCount="indefinite"/>')
+        w_(f'<animate attributeName="fill" calcMode="discrete" '
+           f'values="{HEAD_COLOR};{HEAD_COLOR};{BODY_COLOR};{BODY_COLOR}" '
+           f'keyTimes="0;{f(k_eat)};{f(k_next)};1" '
+           f'dur="{total:.3f}s" repeatCount="indefinite"/>')
 
-        w_('  </rect>')
+        w_('</rect>')
 
     w_('</svg>')
     return '\n'.join(lines)
 
 
-# ── Entry point ─────────────────────────────────────────────────────────────
+# ── MAIN ───────────────────────────────────────────────────────────────────
 
 def main():
     OUTPUT_DIR.mkdir(exist_ok=True)
 
     print(f"Fetching contributions for @{GITHUB_USER} ...")
     weeks = fetch_contributions()
-    print(f"  Got {len(weeks)} weeks  ({len(weeks) * 7} cells)")
+    print(f"Got {len(weeks)} weeks")
 
     svg = generate_svg(weeks)
-    size_kb = len(svg.encode()) / 1024
 
     for name in (
         "github-contribution-grid-snake-dark.svg",
         "github-contribution-grid-snake.svg",
     ):
         (OUTPUT_DIR / name).write_text(svg, encoding="utf-8")
-        print(f"  OK  dist/{name}  ({size_kb:.1f} KB)")
+        print(f"OK dist/{name}")
 
 
 if __name__ == "__main__":
