@@ -1,51 +1,27 @@
-<p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=1,2,3,4,5,6,7,8,9,10&height=250&section=header&text=DiyorKabolov&fontSize=90&animation=fadeIn" />
+# 💫 About Me:
+I am a 20-year-old Information Technology student with a strong focus on Backend Development and Computational Science. Currently, I am working on the technical migration and optimization of an electronic ticket system. My expertise lies at the intersection of software engineering, advanced calculus, and discrete mathematics.<br><br>I have practical experience in developing numerical simulations, including heat conduction models on complex domains using Matplotlib. I am passionate about high-performance computing hardware and optimizing development environments for maximum efficiency.
+
+## 🌐 Socials:
+[![email](https://img.shields.io/badge/Email-D14836?logo=gmail&logoColor=white)](mailto:dierkabolov34@gmail.com) 
+
+# 💻 Tech Stack:
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white) ![MicrosoftSQLServer](https://img.shields.io/badge/Microsoft%20SQL%20Server-CC2927?style=for-the-badge&logo=microsoft%20sql%20server&logoColor=white) ![Flask](https://img.shields.io/badge/flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white) ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+
+# 📊 GitHub Stats:
+<p align="left">
+<img src="https://github-readme-stats.shion.dev/api?username=DiyorKabolov&theme=tokyonight&hide_border=true&include_all_commits=false&count_private=false" alt="GitHub Stats" />
+<br/>
+<img src="https://streak-stats.demolab.com/?user=DiyorKabolov&theme=tokyonight&hide_border=true" alt="GitHub Streak" />
+<br/>
+<img src="https://github-readme-stats.shion.dev/api/top-langs/?username=DiyorKabolov&theme=tokyonight&hide_border=true&include_all_commits=false&count_private=false&layout=compact" alt="Top Languages" />
 </p>
 
-<p align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&pause=1000&color=F7F7F7&center=true&vCenter=true&width=435&lines=Student+at+University;Backend+Developer;Math+%26+Physics+Enthusiast;Gamer+%26+Rock+Fan" />
-</p>
+# 🐍 Activity Snake:
+![github contribution grid snake animation](https://raw.githubusercontent.com/DiyorKabolov/DiyorKabolov/output/github-contribution-grid-snake.svg)
 
 ---
-
-### 🛠 Мой стек технологий
 <p align="center">
-  <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=py,cpp,mysql,git,linux,vscode,matlab&theme=dark" />
-  </a>
-</p>
-
----
-
-### 📊 Статистика профиля
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=DiyorKabolov&show_icons=true&theme=tokyonight&hide_border=true" alt="GitHub Stats" height="180" />
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=DiyorKabolov&theme=tokyonight&hide_border=true" alt="GitHub Streak" height="180" />
-</p>
-
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=DiyorKabolov&layout=compact&theme=tokyonight&hide_border=true" alt="Top Languages" height="180" />
-</p>
-
----
-
-### 🐍 Активность (Snake Game)
-<p align="center">
-  <img src="https://github.com/DiyorKabolov/DiyorKabolov/blob/output/github-contribution-grid-snake.svg" alt="Snake animation" />
-</p>
-
----
-
-### 📫 Связь
-<p align="center">
-  <a href="https://t.me/Diyor_kab" target="blank">
-    <img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" />
-  </a>
-  <a href="mailto:dierkabolov34@gmail.com" target="blank">
-    <img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" />
-  </a>
-</p>
-
-<p align="center">
-  <img src="https://komarev.com/ghpvc/?username=DiyorKabolov&color=blue&style=flat-square&label=VISITS" alt="Visits" />
+<a href="https://visitcount.itsvg.in">
+<img src="https://komarev.com/ghpvc/?username=DiyorKabolov&icon=0&color=0" alt="Views" />
+</a>
 </p>
