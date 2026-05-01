@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=1,2,3,4,5,6,7,8,9,10&height=250&section=header&text=DiyorKabolov&fontSize=90&animation=fadeIn" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=1,2,3,4,5,6,7,8,9,10&height=250&section=header&text=Diyor Kabolov&fontSize=90&animation=fadeIn" />
 </p>
 
 <p align="center">
@@ -19,7 +19,7 @@
 
 ### 📊 Статистика профиля
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=ТВОЙ_ЛОГИН&show_icons=true&theme=tokyonight&hide_border=true&align=center" alt="GitHub Stats" height="180" />
+  <img src="https://github-readme-stats.vercel.app/api?username=DiyorKabolov&show_icons=true&theme=tokyonight&hide_border=true&align=center" alt="GitHub Stats" height="180" />
   <img src="https://github-readme-streak-stats.herokuapp.com/?user=ТВОЙ_ЛОГИН&theme=tokyonight&hide_border=true" alt="GitHub Streak" height="180" />
 </p>
 
@@ -38,10 +38,10 @@
 
 ### 📫 Связь
 <p align="center">
-  <a href="https://t.me/ТВОЙ_ТЕЛЕГРАМ" target="blank">
+  <a href="https://t.me/Diyor_kab" target="blank">
     <img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" />
   </a>
-  <a href="mailto:ТВОЯ_ПОЧТА@gmail.com" target="blank">
+  <a href="mailto:dierkabolov34@gmail.com" target="blank">
     <img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" />
   </a>
 </p>
